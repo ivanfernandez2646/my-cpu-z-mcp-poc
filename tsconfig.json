@@ -3,12 +3,14 @@
     "target": "es2025",
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "rootDir": "src",
-    "outDir": "dist",
+    "noEmit": true,
     "strict": true,
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
-    "skipLibCheck": true
+    "erasableSyntaxOnly": true,
+    "rewriteRelativeImportExtensions": true,
+    "skipLibCheck": true,
+    "types": ["node"]
   },
   "include": ["src"]
 }
