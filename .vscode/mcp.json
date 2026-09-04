@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "cpu-z-mcp-poc": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${workspaceFolder}/src/app/mcp/server.ts"]
+    }
+  }
+}

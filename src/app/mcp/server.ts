@@ -3,6 +3,7 @@ import "reflect-metadata";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { container } from "../../contexts/shared/infrastructure/dependency-injection/diod.config.ts";
+import type { McpPrompt } from "../../contexts/shared/infrastructure/mcp/McpPrompt.ts";
 import type { McpTool } from "../../contexts/shared/infrastructure/mcp/McpTool.ts";
 import type { AnySchema } from "@modelcontextprotocol/sdk/server/zod-compat";
 
@@ -30,6 +31,29 @@ tools.forEach((tool) => {
         content: result.content,
         structuredContent: result.structuredContent,
         isError: result.isError,
+      };
+    },
+  );
+});
+
+const prompts = container
+  .findTaggedServiceIdentifiers<McpPrompt>("mcp-prompt")
+  .map((identifier) => container.get(identifier));
+
+prompts.forEach((prompt) => {
+  server.registerPrompt(
+    prompt.name,
+    {
+      title: prompt.title,
+      description: prompt.description,
+      argsSchema: prompt.inputSchema as Record<string, AnySchema>,
+    },
+    async (params: Record<string, unknown>) => {
+      const result = await prompt.handler(params);
+
+      return {
+        messages: result.messages,
+        description: result.description,
       };
     },
   );
