@@ -1,5 +1,6 @@
 import { ContainerBuilder } from "diod";
 import { ComputerPurposeUpgradePrompt } from "../../../../app/mcp/prompts/ComputerPurposeUpgradePrompt.ts";
+import { CpuInfoResource } from "../../../../app/mcp/resources/CpuInfoResource.ts";
 import { CpuInfoFinderTool } from "../../../../app/mcp/tools/CpuInfoFinder.ts";
 import { DiskInfoFinderTool } from "../../../../app/mcp/tools/DiskInfoFinder.ts";
 import { MemoryInfoFinderTool } from "../../../../app/mcp/tools/MemoryInfoFinder.ts";
@@ -7,6 +8,7 @@ import { MemoryInfoFinderTool } from "../../../../app/mcp/tools/MemoryInfoFinder
 const builder = new ContainerBuilder();
 
 // MCP Resources
+builder.registerAndUse(CpuInfoResource).addTag("mcp-resource");
 
 // MCP Tools
 builder.registerAndUse(CpuInfoFinderTool).addTag("mcp-tool");

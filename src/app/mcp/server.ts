@@ -4,12 +4,36 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { container } from "../../contexts/shared/infrastructure/dependency-injection/diod.config.ts";
 import type { McpPrompt } from "../../contexts/shared/infrastructure/mcp/McpPrompt.ts";
+import type { McpResource } from "../../contexts/shared/infrastructure/mcp/McpResource.ts";
 import type { McpTool } from "../../contexts/shared/infrastructure/mcp/McpTool.ts";
 import type { AnySchema } from "@modelcontextprotocol/sdk/server/zod-compat";
 
 const server = new McpServer({
   name: "cpu-z-mcp-poc",
   version: "1.0.0",
+});
+
+const resources = container
+  .findTaggedServiceIdentifiers<McpResource>("mcp-resource")
+  .map((identifier) => container.get(identifier));
+
+resources.forEach((resource) => {
+  server.registerResource(
+    resource.name,
+    resource.uriTemplate,
+    {
+      title: resource.title,
+      description: resource.description,
+      mimeType: "application/json",
+    },
+    async () => {
+      const result = await resource.handler();
+
+      return {
+        contents: result.contents,
+      };
+    },
+  );
 });
 
 const tools = container
